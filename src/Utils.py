@@ -19,17 +19,17 @@ def load_stop_words(file=None):
     return stoplist_set
 
 
+def load_chapters(ch_range=None):
+    chapters = []
+    for i in range(1, 13) if not ch_range else ch_range:
+        chapters += [load_chapter(i)]
+    return chapters
+
+
 def load_chapter(number):
     file = os.path.join("..", "data", "chapters", "{0}.txt".format(number))
     with open(file, "r", encoding="utf-8") as chapter:
         return chapter.readlines()
-
-
-def load_chapters(crange=None):
-    chapters = []
-    for i in range(1, 13) if not crange else crange:
-        chapters += [load_chapter(i)]
-    return chapters
 
 
 def apply_stoplist(words_list):
@@ -55,7 +55,7 @@ def split_chapter(chapter):
     return paragraphs
 
 
-def split_paragraph(paragraph):
+def split_paragraph_to_sentences(paragraph):
     return [s for s in re.split("\.|!|\?", paragraph)]
 
 
