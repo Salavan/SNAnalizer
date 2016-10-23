@@ -5,8 +5,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 
-max_edge_width = 10
-max_node_size = 3000
+max_edge_width = 5
+max_node_size = 10000
 
 class SNA:
     __graph = None
@@ -18,14 +18,17 @@ class SNA:
         self.__book = book
 
         self.prepare_data_for_graph(self.__book.get_paragraphs_matrices())
+        print(self.__characters_influence_per_chapter)
+        # self.build_graph_from_paragraphs()
+        self.build_graph_from_sentences()
 
-        self.build_graph_from_paragraphs()
-        for i in range(len(self.__chapters_graphs)):
-            self.draw_chapter_graph(i, "ByParagraphs")
+        pos = self.get_nodes_pos(nx.compose_all(self.__chapters_graphs))
 
-        # self.build_graph_from_sentences()
         # for i in range(len(self.__chapters_graphs)):
-        #     self.draw_chapter_graph(i, "BySentences")
+        #     self.draw_chapter_graph(i, "ByParagraphs", pos)
+
+        for i in range(len(self.__chapters_graphs)):
+            self.draw_chapter_graph(i, "BySentences", pos)
 
 
 
@@ -40,14 +43,18 @@ class SNA:
             for y in range(len(matrix)):
                 if x != y and matrix[x][y] != 0:
                     for _ in range(int(matrix[x][y])):
-                        # graph.add_edge(rev_character_map[x], rev_character_map[y]) #add_weighted_edge
-                        graph.add_edge(rev_character_map[x], rev_character_map[y], weight=1) #add_weighted_edge
+                        try:
+                            graph.edge[rev_character_map[x]][rev_character_map[y]]['weight'] += 1
+                            graph.edge[rev_character_map[y]][rev_character_map[x]]['weight'] += 1
+                        except:
+                            graph.add_edge(rev_character_map[x], rev_character_map[y], weight=1)
+                            graph.add_edge(rev_character_map[y], rev_character_map[x], weight=1)
 
     def build_graph_from_chapter(self, graph, matrix):
         self.add_edges(graph, matrix)
 
     def get_nodes_pos(self, whole_graph):
-        return nx.spring_layout(whole_graph)
+        return nx.spring_layout(whole_graph, k=1,iterations=20)
 
     def build_whole_graph(self, matrices):
         whole_graph = nx.Graph()
@@ -68,33 +75,18 @@ class SNA:
     def build_graph_from_sentences(self):
         self.build_graphs(self.__book.get_sentences_matrices())
 
-    def draw_chapter_graph(self, chap, dir):
-        # character_map = self.__book.get_characters_map()
-        # print(graph)
-        # a, r, = 'Alice', 'Rabbit'
-        # print(a, r)
-        # # print(graph.edge)
-        # graph.edge[a][r]['weight'] = 10
-
+    def draw_chapter_graph(self, chap, dir, pos = None):
         graph = self.__chapters_graphs[chap]
 
-        rev_character_map = self.__book.get_rev_characters_map()
+        character_map = self.__book.get_characters_map()
 
         nodes_size = np.ones(graph.number_of_nodes())*max_node_size
 
-        for i in range(graph.number_of_nodes()):
-            if rev_character_map[i] in graph.nodes():
-                # print(graph.nodes().index(rev_character_map[i]))
-                # print(chap)
-                nodes_size[graph.nodes().index(rev_character_map[i])] *= self.__characters_influence_per_chapter[chap][i]
-
-        # nodes_size[graph.nodes().index("Alice")] = 5000
+        for n in graph.nodes():
+            nodes_size[graph.nodes().index(n)] *= self.__characters_influence_per_chapter[chap][character_map[n]]
 
         edges = graph.edges()
-        weights = [graph[u][v]['weight'] for u,v in edges]
-        # pos = self.get_nodes_pos(self.__chapters_graphs[-1])
-
-        pos = None
+        weights = [graph[u][v]['weight'] for u,v in edges]*10
 
         if pos:
             nx.draw_networkx(graph, pos = pos, node_size=nodes_size, node_color='silver', width=weights, font_size=8)
