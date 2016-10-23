@@ -33,24 +33,25 @@ class AliceBook:
         self.process_book_by_sentences_to_lower()
 
 
-        sentences_matrices = self.find_events_in_book(self.chapters_by_sentences)
-        paragraphs_matrices = self.find_events_in_book(self.chapters_by_paragraphs)
-        #
-        # sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(sentences_matrices)
+        sentences_matrices = self.find_events_in_book(self.__processed_book_by_sentences)
+        # paragraphs_matrices = self.find_events_in_book(self.__processed_book_by_paragraphs)
+
+        sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(sentences_matrices)
         # paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(paragraphs_matrices)
-        #
-        # megaA = ""
+
+        megaA = ""
         # megaB = ""
-        # for text in sentences_texts_for_wordcloud:
-        #     megaA += text
+        for text in sentences_texts_for_wordcloud:
+            megaA += text
         # for text in paragraphs_texts_for_wordcloud:
         #     megaB += text
         #
-        # wordcloud_save(megaA, "../data/wordcloud/BookBySentences")
+        wordcloud_save(megaA, "../data/wordcloud/BookBySentences")
         # wordcloud_save(megaB, "../data/wordcloud/BookByParagraphs")
         #
-        # for i in range(0, 12):
-        #     wordcloud_save(sentences_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_BySentences")
+        for i in range(0, 12):
+            # wordcloud_save(sentences_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_BySentences")
+            wordcloud_show(sentences_texts_for_wordcloud[i])
         #     wordcloud_save(paragraphs_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_ByParagraphs")
 
     def get_book_by_paragraphs(self):
@@ -71,12 +72,12 @@ class AliceBook:
 
 
     def find_events_in_chapter(self, chapter):
-        adj_matrix = np.zeros((len(self.characters), len(self.characters)))
+        adj_matrix = np.zeros((len(self.__character_list), len(self.__character_list)))
         for chunks in chapter:
             for chunk in chapter[chunks]:
                 characters_in_event = set()
                 for word in chunk:
-                    if word in self.characters_map:
+                    if word in self.__characters_map:
                         characters_in_event.add(word)
 
                 if len(characters_in_event) > 1:
@@ -84,7 +85,7 @@ class AliceBook:
                         for name2 in characters_in_event:
                             if name != name2:
                                 # adj_matrix[self.characters_map[name]][self.characters_map[name2]] = 1
-                                adj_matrix[self.characters_map[name]][self.characters_map[name2]] += 1
+                                adj_matrix[self.__characters_map[name]][self.__characters_map[name2]] += 1
 
         return adj_matrix
 
@@ -99,8 +100,8 @@ class AliceBook:
         result = []
         for chapter in data:
             string = ""
-            for name in self.characters:
-                for _ in range(int(np.sum(chapter[self.characters_map[name]]))):
+            for name in self.__character_list:
+                for _ in range(int(np.sum(chapter[self.__character_list[name]]))):
                     string += name + " "
             result += [string]
 
