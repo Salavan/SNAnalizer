@@ -3,6 +3,7 @@ import os
 
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 
 class SNA:
     __graph = None
@@ -29,6 +30,7 @@ class SNA:
                 if x != y and matrix[x][y] != 0:
                     for _ in range(int(matrix[x][y])):
                         graph.add_edge(rev_character_map[x], rev_character_map[y]) #add_weighted_edge
+                        # graph.add_edge(rev_character_map[x], rev_character_map[y], weight=100) #add_weighted_edge
 
     def build_graph_from_chapter(self, graph, matrix):
         self.add_eages(graph, matrix)
@@ -67,7 +69,10 @@ class SNA:
         return graph
 
     def draw_graph(self, graph, pos, dir, file_name):
-        nx.draw_networkx(graph, pos = pos, node_size=1000, node_color='silver', width=1, font_size=8)
+        nodes_size = np.ones(graph.number_of_nodes())*1000
+        nodes_size[0] = 5000
+        print(nodes_size)
+        nx.draw_networkx(graph, pos = pos, node_size=nodes_size, node_color='silver', width=1, font_size=8)
         plt.savefig(os.path.join("..", "data", "graphs", "{}".format(dir), "{}".format(file_name)))
         plt.clf()
 
