@@ -1,22 +1,37 @@
 # -*- coding: utf-8 -*-
 # import re
+import codecs
 import os.path
 import matplotlib.pyplot as plt
+import sys
 from wordcloud import WordCloud
+
+python_version = sys.version_info.major
 
 
 def load_stop_words(file=None):
     stoplist_set = set()
     default_file = os.path.join("..", "data", "stoplist.txt")
-    with open(default_file if not file else file, "r", encoding="utf-8") as stoplist:
-        for line in stoplist:
-            word = line.strip()
-            new_word = ""
-            for c in word:
-                if not c.isalpha():
-                    continue
-                new_word += c
-            stoplist_set.add(new_word)
+    if python_version == 3:
+        with open(default_file if not file else file, "r", encoding="utf-8") as stoplist:
+            for line in stoplist:
+                word = line.strip()
+                new_word = ""
+                for c in word:
+                    if not c.isalpha():
+                        continue
+                    new_word += c
+                stoplist_set.add(new_word)
+    else:
+        with codecs.open(default_file if not file else file, "r", encoding="utf-8") as stoplist:
+            for line in stoplist:
+                word = line.strip()
+                new_word = ""
+                for c in word:
+                    if not c.isalpha():
+                        continue
+                    new_word += c
+                stoplist_set.add(new_word)
     return stoplist_set
 
 
@@ -29,8 +44,13 @@ def load_chapters(ch_range=None):
 
 def load_chapter(number):
     file = os.path.join("..", "data", "chapters", "{0}.txt".format(number))
-    with open(file, "r", encoding="utf-8") as chapter:
-        return chapter.readlines()
+    if python_version == 3:
+        with open(file, "r", encoding="utf-8") as chapter:
+            return chapter.readlines()
+    else:
+        with codecs.open(file, "r", encoding="utf-8") as chapter:
+            return chapter.readlines()
+
 
 
 def apply_stoplist(words_list):
