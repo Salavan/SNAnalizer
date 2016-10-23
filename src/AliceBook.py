@@ -301,7 +301,6 @@ class AliceBook:
 
 
 def filter_alice_character_list(characters_list):
-    # print(characters_list)
     characters_list.remove("Come")
     characters_list.remove("Beautiful")
     characters_list.remove("Let")

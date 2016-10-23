@@ -15,10 +15,11 @@ if __name__ == "__main__":
     #
     # alice.show_wordcloud_from_sencences()
     # alice.show_wordcloud_from_paragraphs()
-
     # for i in range(0, 12):
-    #     alice.save_wordcloud_from_sencences_from_chapter(i)
-    #     alice.save_wordcloud_from_paragraphs_from_chapter(i)
+    #     alice.show_wordcloud_from_sencences_from_chapter(i)
+    #     alice.show_wordcloud_from_paragraphs_from_chapter(i)
+
+
 
     # print(book_by_paragraphs[0][5])
     # print(processed_book_by_paragraphs[0][5])
