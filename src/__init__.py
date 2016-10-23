@@ -5,14 +5,19 @@ from src.SNA import SNA
 
 if __name__ == "__main__":
     alice = AliceBook()
-    book_by_paragraphs = alice.get_book_by_paragraphs()
-    book_by_sentences = alice.get_book_by_sentences()
-    processed_book_by_paragraphs = alice.get_processed_book_by_paragraphs()
-    processed_book_by_sentences = alice.get_processed_book_by_sentences()
-    character_list = alice.get_character_list()
+    sna = SNA(alice)
 
-    alice.show_wordcloud_from_sencences()
-    alice.show_wordcloud_from_paragraphs()
+    # book_by_paragraphs = alice.get_book_by_paragraphs()
+    # book_by_sentences = alice.get_book_by_sentences()
+    # processed_book_by_paragraphs = alice.get_processed_book_by_paragraphs()
+    # processed_book_by_sentences = alice.get_processed_book_by_sentences()
+    # character_list = alice.get_character_list()
+    #
+    # alice.show_wordcloud_from_sencences()
+    # alice.show_wordcloud_from_paragraphs()
+
+
+
     # for i in range(0, 12):
     #     alice.show_wordcloud_from_sencences_from_chapter(i)
     #     alice.show_wordcloud_from_paragraphs_from_chapter(i)
@@ -35,6 +40,3 @@ if __name__ == "__main__":
     #
     #
     # print(character_list)
-
-
-    # sna = SNA()
