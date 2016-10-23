@@ -30,11 +30,11 @@ class AliceBook:
         self.load_book_by_paragraphs()
         self.load_book_by_sentences()
 
-        self.process_book_by_paragraphs()
-        self.process_book_by_sentences()
+        # self.process_book_by_paragraphs()
+        # self.process_book_by_sentences()
 
-        # self.process_book_by_paragraphs_with_nltk()
-        # self.process_book_by_sentences_with_nltk()
+        self.process_book_by_paragraphs_with_nltk()
+        self.process_book_by_sentences_with_nltk()
 
         self.load_character_list()
         self.load_character_map()
@@ -154,6 +154,8 @@ class AliceBook:
                     for word in words_list[1:]:
                         if len(word) > 2 and word[0].isupper() and not word[1].isupper():
                             if not word in characters_map:
+
+                                # print(nltk.pos_tag)
                                 characters_map[word] = 1
                             characters_map[word] += 1
         characters_list = []
@@ -162,6 +164,30 @@ class AliceBook:
                 characters_list += [character]#.lower()]
         filter_alice_character_list(characters_list)
         self.__character_list = characters_list
+
+    def get_charactes_with_ntlk(self):
+        from nltk import pos_tag
+        from nltk import ne_chunk
+
+        person_list = []
+        for chapter in self.__processed_book_by_sentences:
+            for paragraph in self.__processed_book_by_sentences[chapter]:
+                for words_list in self.__processed_book_by_sentences[chapter][paragraph]:
+                    pos = pos_tag(words_list)
+                    sentt = ne_chunk(pos, binary = False)
+                    person = []
+                    name = ""
+                    for subtree in sentt.subtrees(filter=lambda t: t.label() == 'PERSON'):
+                        for leaf in subtree.leaves():
+                            person.append(leaf[0])
+                        if len(person) > 1: #avoid grabbing lone surnames
+                            for part in person:
+                                name += part + ' '
+                            if name[:-1] not in person_list:
+                                person_list.append(name[:-1])
+                            name = ''
+                        person = []
+        return person_list
 
     def load_character_map(self):
         characters_map = {}
