@@ -21,6 +21,7 @@ class AliceBook:
     __processed_book_by_sentences = None
     __character_list = None
     __characters_map = None
+    __rev_characters_map = None
     __sentences_matrices = None
     __paragraphs_matrices = None
 
@@ -29,8 +30,19 @@ class AliceBook:
         self.load_chapters()
         self.load_book_by_paragraphs()
         self.load_book_by_sentences()
-        self.process_book_by_paragraphs_with_nltk()
-        self.process_book_by_sentences_with_nltk()
+
+        try:
+            self.__processed_book_by_paragraphs = np.load(os.path.join("cache", "processed_book_by_paragraphs.npy"))[()]
+        except:
+            self.process_book_by_paragraphs_with_nltk()
+            np.save(os.path.join("cache", "processed_book_by_paragraphs"), self.__processed_book_by_paragraphs)
+
+        try:
+            self.__processed_book_by_sentences = np.load(os.path.join("cache", "processed_book_by_sentences.npy"))[()]
+        except:
+            self.process_book_by_sentences_with_nltk()
+            np.save(os.path.join("cache", "processed_book_by_sentences"), self.__processed_book_by_sentences)
+
 
         self.load_character_list()
         self.load_character_map()
@@ -52,6 +64,18 @@ class AliceBook:
     def get_character_list(self):
         return self.__character_list
 
+    def get_characters_map(self):
+        return self.__characters_map
+
+    def get_rev_characters_map(self):
+        return self.__rev_characters_map
+
+    def get_sentences_matrices(self):
+        return self.__sentences_matrices
+
+    def get_paragraphs_matrices(self):
+        return self.__paragraphs_matrices
+
     def show_wordcloud_from_sencences(self):
         sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(self.__sentences_matrices)
         list_of_words_from_book_by_sentences = ""
@@ -70,15 +94,19 @@ class AliceBook:
 
     def show_wordcloud_from_sencences_from_chapter(self, i):
         sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(self.__sentences_matrices)
-
         wordcloud_show(sentences_texts_for_wordcloud[i])
-        # wordcloud_save(sentences_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_BySentences")
+
+    def save_wordcloud_from_sencences_from_chapter(self, i):
+        sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(self.__sentences_matrices)
+        wordcloud_save(sentences_texts_for_wordcloud[i], os.path.join("..", "data", "wordcloud", "{}_BySentences".format(i+1)))
 
     def show_wordcloud_from_paragraphs_from_chapter(self, i):
         paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(self.__paragraphs_matrices)
         wordcloud_show(paragraphs_texts_for_wordcloud[i])
-        # wordcloud_save(paragraphs_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_ByParagraphs")
 
+    def save_wordcloud_from_paragraphs_from_chapter(self, i):
+        paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(self.__paragraphs_matrices)
+        wordcloud_save(paragraphs_texts_for_wordcloud[i], os.path.join("..", "data", "wordcloud", "{}_ByParagraphs".format(i+1)))
 
     def load_whole_book(self):
         file = os.path.join("..", "data", "alice.txt")
@@ -156,7 +184,7 @@ class AliceBook:
                             characters_map[word] += 1
         characters_list = []
         for character in characters_map:
-            if characters_map[character] > 2:
+            if characters_map[character] > 3:
                 characters_list += [character]
         filter_alice_character_list(characters_list)
         self.__character_list = characters_list
@@ -187,11 +215,14 @@ class AliceBook:
 
     def load_character_map(self):
         characters_map = {}
+        rev_characters_map = {}
         counter = 0
         for character in self.__character_list:
             characters_map[character] = counter
+            rev_characters_map[counter] = character
             counter += 1
         self.__characters_map = characters_map
+        self.__rev_characters_map = rev_characters_map
 
     def process_book_by_paragraphs_to_lower(self):
         for chapter in self.__processed_book_by_paragraphs:
@@ -275,35 +306,35 @@ def filter_alice_character_list(characters_list):
     characters_list.remove("Beautiful")
     characters_list.remove("Let")
     characters_list.remove("Mock")  # turtle
-    characters_list.remove("Paris")
+    # characters_list.remove("Paris")
     characters_list.remove("Majesty")
     characters_list.remove("French")
     characters_list.remove("White")
     characters_list.remove("Duchess")
-    characters_list.remove("Adventures")
-    characters_list.remove("Silence")
-    characters_list.remove("Longitude")
+    # characters_list.remove("Adventures")
+    # characters_list.remove("Silence")
+    # characters_list.remove("Longitude")
     characters_list.remove("Miss")
-    characters_list.remove("Pray")
+    # characters_list.remove("Pray")
     characters_list.remove("English")
     characters_list.remove("March")  # hare
-    characters_list.remove("Conqueror")  # William
+    # characters_list.remove("Conqueror")  # William
     characters_list.remove("Said")
-    characters_list.remove("Father")  # William
+    # characters_list.remove("Father")  # William
     characters_list.remove("Lobster")  # Quadrille
-    characters_list.remove("Sure")
+    # characters_list.remove("Sure")
     characters_list.remove("Soup")
-    characters_list.remove("Uglification")
+    # characters_list.remove("Uglification")
     characters_list.remove("Two")  # rarely, conflicts
     characters_list.remove("Hearts")  # specifics exists
     characters_list.remove("Yet")
-    characters_list.remove("One")
-    characters_list.remove("Mystery")
+    # characters_list.remove("One")
+    # characters_list.remove("Mystery")
     characters_list.remove("Soo")
-    characters_list.remove("Latitude")
-    characters_list.remove("Northumbria")  # place
-    characters_list.remove("Mercia")  # place
-    characters_list.remove("Mary")  # Ann
-    characters_list.remove("Rome")
-    characters_list.remove("Well")
+    # characters_list.remove("Latitude")
+    # characters_list.remove("Northumbria")  # place
+    # characters_list.remove("Mercia")  # place
+    # characters_list.remove("Mary")  # Ann
+    # characters_list.remove("Rome")
+    # characters_list.remove("Well")
     # print(characters_list)
