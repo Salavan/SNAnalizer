@@ -30,8 +30,11 @@ class AliceBook:
         self.load_chapters()
         self.load_book_by_paragraphs()
         self.load_book_by_sentences()
+
         # self.process_book_by_paragraphs()
         # self.process_book_by_sentences()
+
+        print(self.__book_by_sentences)
 
         self.process_book_by_paragraphs_with_nltk()
         self.process_book_by_sentences_with_nltk()
