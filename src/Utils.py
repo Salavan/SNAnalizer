@@ -5,6 +5,9 @@ import os.path
 import matplotlib.pyplot as plt
 import sys
 from wordcloud import WordCloud
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+from nltk import wordpunct_tokenize
 
 python_version = sys.version_info.major
 
@@ -121,3 +124,11 @@ def convert_to_lowercase(book):
                 for j in range(len(book[chapter][chunks][i])):
                     book[chapter][chunks][i][j] = book[chapter][chunks][i][j].lower()
 
+def filter_string_with_nltk(text):
+    result = []
+    for word in wordpunct_tokenize(text):
+        if word.isalpha() and word.lower() not in stopwords.words('english'):
+            base_form = WordNetLemmatizer().lemmatize(word, 'v')
+            result.append(base_form)
+
+    return result
