@@ -31,17 +31,9 @@ class AliceBook:
         self.process_book_by_paragraphs_to_lower()
         self.process_book_by_sentences_to_lower()
 
-        xxx = self.load_simplify_book_by_paragraphs()
-        print(xxx[0])
-        print(self.__processed_book_by_paragraphs[0])
-        print(xxx[0][0])
-        print(self.__processed_book_by_paragraphs[0][0])
-        # print(xxx[0][0][0])
-        # print(self.__processed_book_by_paragraphs[0][0][0])
-        # self.load_simplify_book_by_sentences()
-        #
-        # sentences_matrices = self.find_events_in_book(self.chapters_by_sentences)
-        # paragraphs_matrices = self.find_events_in_book(self.chapters_by_paragraphs)
+
+        sentences_matrices = self.find_events_in_book(self.chapters_by_sentences)
+        paragraphs_matrices = self.find_events_in_book(self.chapters_by_paragraphs)
         #
         # sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(sentences_matrices)
         # paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(paragraphs_matrices)
@@ -196,61 +188,60 @@ class AliceBook:
                         self.__processed_book_by_sentences[chapter][paragraph][sentence][word] \
                             = self.__processed_book_by_sentences[chapter][paragraph][sentence][word].lower()
 
-    def load_simplify_book_by_paragraphs(self):
-        # book = copy.deepcopy(self.__processed_book_by_paragraphs)
-        # print(book)
-        # book = {0, [ [["111", "222"], ["333", "444"]] ]}
-        book = {0: [['alice', 'beginning'], ['considering', 'mind', 'hot'], [], [], []]}
-        chapter__ = [['alice', 'beginning'], ['considering', 'mind', 'hot'], [], [], []]
-        paragraph__ = ['alice', 'beginning']
+    # def load_simplify_book_by_paragraphs(self):
+    #     # book = copy.deepcopy(self.__processed_book_by_paragraphs)
+    #     # print(book)
+    #     # book = {0, [ [["111", "222"], ["333", "444"]] ]}
+    #     book = {0: [['alice', 'beginning'], ['considering', 'mind', 'hot'], [], [], []]}
+    #     chapter__ = [['alice', 'beginning'], ['considering', 'mind', 'hot'], [], [], []]
+    #     paragraph__ = ['alice', 'beginning']
+    #
+    #     nbook = {}
+    #     for c in range(len(book)):
+    #         for p in range(len(book[c])):
+    #             if book[c][p]:
+    #                 nbook[c] = book[c][p]
+    #     print(book)
+    #     print("****")
+    #
+    #     # for chapter in book.keys():
+    #     #     for paragraph in range(len(book[chapter])):
+    #     #         book[chapter][paragraph] = list(filter(None, book[chapter][paragraph]))
+    #     #     if not book[chapter]:
+    #     #         del book[chapter]
+    #     return book
 
-        nbook = {}
-        for c in range(len(book)):
-            for p in range(len(book[c])):
-                if book[c][p]:
-                    nbook[c] = book[c][p]
-        print(book)
-        print("****")
-
-        # for chapter in book.keys():
-        #     for paragraph in range(len(book[chapter])):
-        #         book[chapter][paragraph] = list(filter(None, book[chapter][paragraph]))
-        #     if not book[chapter]:
-        #         del book[chapter]
-        return book
-
-
-    def remove_empty_keys(d):
-        for k in d.keys():
-            if not d[k]:
-                del d[k]
-
-    def not_empty_paragraphs_len(self, book, chapter):
-        lenth = 0
-        for paragraph in range(len(book[chapter])):
-            if book[chapter][paragraph]:
-                lenth += 1
-        return lenth
-
-    def not_empty_sentences_len(self, book, chapter, paragraph):
-        lenth = 0
-        for sentence in range(len(book[chapter][paragraph])):
-            if book[chapter][paragraph][sentence]:
-                lenth += 1
-        return lenth
-
-    def load_simplify_book_by_paragraphs2(self):
-        simplified_book = {}
-        for chapter in range(len(self.__processed_book_by_paragraphs)):
-            simplified_book[chapter] = {}
-            for paragraph in range(len(self.__processed_book_by_paragraphs[chapter])):
-                simplified_book[chapter][paragraph] = []
-                for word in range(len(self.__processed_book_by_paragraphs[chapter][paragraph])):
-                    if self.__processed_book_by_paragraphs[chapter][paragraph][word]:
-                        simplified_book[chapter][paragraph]\
-                            .append(self.__processed_book_by_paragraphs[chapter][paragraph][word])
-        return simplified_book
-
+    #
+    # def remove_empty_keys(d):
+    #     for k in d.keys():
+    #         if not d[k]:
+    #             del d[k]
+    #
+    # def not_empty_paragraphs_len(self, book, chapter):
+    #     lenth = 0
+    #     for paragraph in range(len(book[chapter])):
+    #         if book[chapter][paragraph]:
+    #             lenth += 1
+    #     return lenth
+    #
+    # def not_empty_sentences_len(self, book, chapter, paragraph):
+    #     lenth = 0
+    #     for sentence in range(len(book[chapter][paragraph])):
+    #         if book[chapter][paragraph][sentence]:
+    #             lenth += 1
+    #     return lenth
+    #
+    # def load_simplify_book_by_paragraphs2(self):
+    #     simplified_book = {}
+    #     for chapter in range(len(self.__processed_book_by_paragraphs)):
+    #         simplified_book[chapter] = {}
+    #         for paragraph in range(len(self.__processed_book_by_paragraphs[chapter])):
+    #             simplified_book[chapter][paragraph] = []
+    #             for word in range(len(self.__processed_book_by_paragraphs[chapter][paragraph])):
+    #                 if self.__processed_book_by_paragraphs[chapter][paragraph][word]:
+    #                     simplified_book[chapter][paragraph]\
+    #                         .append(self.__processed_book_by_paragraphs[chapter][paragraph][word])
+    #     return simplified_book
 
 
 def filter_alice_character_list(characters_list):
