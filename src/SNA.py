@@ -20,11 +20,13 @@ class SNA:
         self.prepare_data_for_graph(self.__book.get_paragraphs_matrices())
 
         self.build_graph_from_paragraphs()
-        self.build_graph_from_sentences()
-
         for i in range(len(self.__chapters_graphs)):
-            print(self.__chapters_graphs)
             self.draw_chapter_graph(i, "ByParagraphs")
+
+        # self.build_graph_from_sentences()
+        # for i in range(len(self.__chapters_graphs)):
+        #     self.draw_chapter_graph(i, "BySentences")
+
 
 
     def add_nodes(self, graph):
@@ -83,7 +85,7 @@ class SNA:
         for i in range(graph.number_of_nodes()):
             if rev_character_map[i] in graph.nodes():
                 # print(graph.nodes().index(rev_character_map[i]))
-                print(chap)
+                # print(chap)
                 nodes_size[graph.nodes().index(rev_character_map[i])] *= self.__characters_influence_per_chapter[chap][i]
 
         # nodes_size[graph.nodes().index("Alice")] = 5000
