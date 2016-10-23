@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# TODO: Ogarniecie zmiany Queen's => Queen itd.
 # TODO: Przemyslec duze male litery u bohaterow, i ogarnac lepsze znajdowanie ich. np. jakiś tam Cat
 # TODO: zastanowić się nad she itd.
 import codecs
@@ -56,15 +55,16 @@ class AliceBook:
         for text in paragraphs_texts_for_wordcloud:
             list_of_words_from_book_by_paragraphs += text
 
-        # wordcloud_save(list_of_words_from_book_by_sentences, "../data/wordcloud/BookBySentences")
         wordcloud_show(list_of_words_from_book_by_sentences)
-        # wordcloud_save(list_of_words_from_book_by_paragraphs, "../data/wordcloud/BookByParagraphs")
         wordcloud_show(list_of_words_from_book_by_paragraphs)
 
-        for i in range(0, 2):
+        # wordcloud_save(list_of_words_from_book_by_sentences, "../data/wordcloud/BookBySentences")
+        # wordcloud_save(list_of_words_from_book_by_paragraphs, "../data/wordcloud/BookByParagraphs")
+
+        # for i in range(0, 12):
             # wordcloud_save(sentences_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_BySentences")
-            wordcloud_show(sentences_texts_for_wordcloud[i])
-            wordcloud_show(paragraphs_texts_for_wordcloud[i])
+            # wordcloud_show(sentences_texts_for_wordcloud[i])
+            # wordcloud_show(paragraphs_texts_for_wordcloud[i])
             # wordcloud_save(paragraphs_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_ByParagraphs")
 
     def get_book_by_paragraphs(self):
@@ -129,10 +129,6 @@ class AliceBook:
                         = apply_stoplist(split_to_words(book_by_sentences[chapter][paragraph][sentence]))
         self.__processed_book_by_sentences = book_by_sentences
 
-
-
-
-
     def process_book_by_paragraphs_with_nltk(self):
         book_by_paragraphs = copy.deepcopy(self.__book_by_paragraphs)
         for chapter in book_by_paragraphs:
@@ -163,7 +159,7 @@ class AliceBook:
         characters_list = []
         for character in characters_map:
             if characters_map[character] > 2:
-                characters_list += [character.lower()]
+                characters_list += [character]#.lower()]
         filter_alice_character_list(characters_list)
         self.__character_list = characters_list
 
@@ -175,20 +171,20 @@ class AliceBook:
             counter += 1
         self.__characters_map = characters_map
 
-    # def process_book_by_paragraphs_to_lower(self):
-    #     for chapter in self.__processed_book_by_paragraphs:
-    #         for paragraph in range(len(self.__processed_book_by_paragraphs[chapter])):
-    #             for word in range(len(self.__processed_book_by_paragraphs[chapter][paragraph])):
-    #                 self.__processed_book_by_paragraphs[chapter][paragraph][word] \
-    #                     = self.__processed_book_by_paragraphs[chapter][paragraph][word].lower()
-    #
-    # def process_book_by_sentences_to_lower(self):
-    #     for chapter in self.__processed_book_by_sentences:
-    #         for paragraph in range(len(self.__processed_book_by_sentences[chapter])):
-    #             for sentence in range(len(self.__processed_book_by_sentences[chapter][paragraph])):
-    #                 for word in range(len(self.__processed_book_by_sentences[chapter][paragraph][sentence])):
-    #                     self.__processed_book_by_sentences[chapter][paragraph][sentence][word] \
-    #                         = self.__processed_book_by_sentences[chapter][paragraph][sentence][word].lower()
+    def process_book_by_paragraphs_to_lower(self):
+        for chapter in self.__processed_book_by_paragraphs:
+            for paragraph in range(len(self.__processed_book_by_paragraphs[chapter])):
+                for word in range(len(self.__processed_book_by_paragraphs[chapter][paragraph])):
+                    self.__processed_book_by_paragraphs[chapter][paragraph][word] \
+                        = self.__processed_book_by_paragraphs[chapter][paragraph][word].lower()
+
+    def process_book_by_sentences_to_lower(self):
+        for chapter in self.__processed_book_by_sentences:
+            for paragraph in range(len(self.__processed_book_by_sentences[chapter])):
+                for sentence in range(len(self.__processed_book_by_sentences[chapter][paragraph])):
+                    for word in range(len(self.__processed_book_by_sentences[chapter][paragraph][sentence])):
+                        self.__processed_book_by_sentences[chapter][paragraph][sentence][word] \
+                            = self.__processed_book_by_sentences[chapter][paragraph][sentence][word].lower()
 
     def find_events_in_book_by_sentences(self, book):
         adj_matrices = []
@@ -253,13 +249,13 @@ class AliceBook:
 
 def filter_alice_character_list(characters_list):
     print(characters_list)
-    characters_list.remove("let")
-    characters_list.remove("time")
-    characters_list.remove("come")
-    characters_list.remove("english")
-    characters_list.remove("soooop")
-    characters_list.remove("white")
-    characters_list.remove("cat")
-    characters_list.remove("turtle")
-    characters_list.remove("hare")
-    characters_list.append("sister")
+    # characters_list.remove("let")
+    # characters_list.remove("time")
+    # characters_list.remove("come")
+    # characters_list.remove("english")
+    # characters_list.remove("soooop")
+    # characters_list.remove("white")
+    # characters_list.remove("cat")
+    # characters_list.remove("turtle")
+    # characters_list.remove("hare")
+    # characters_list.append("sister")
