@@ -270,7 +270,7 @@ class AliceBook:
 
 
 def filter_alice_character_list(characters_list):
-    print(characters_list)
+    # print(characters_list)
     characters_list.remove("Come")
     characters_list.remove("Beautiful")
     characters_list.remove("Let")
@@ -306,4 +306,4 @@ def filter_alice_character_list(characters_list):
     characters_list.remove("Mary")  # Ann
     characters_list.remove("Rome")
     characters_list.remove("Well")
-    print(characters_list)
+    # print(characters_list)
