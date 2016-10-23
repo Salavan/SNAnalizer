@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # TODO: Ogarniecie zmiany Queen's => Queen itd.
 # TODO: Przemyslec duze male litery u bohaterow, i ogarnac lepsze znajdowanie ich. np. jakiś tam Cat
 # TODO: zastanowić się nad she itd.
@@ -36,29 +37,29 @@ class AliceBook:
         print(self.__processed_book_by_paragraphs[0])
         print(xxx[0][0])
         print(self.__processed_book_by_paragraphs[0][0])
-        # print(xxx[0][0][0])
-        # print(self.__processed_book_by_paragraphs[0][0][0])
-        # self.load_simplify_book_by_sentences()
-        #
-        # sentences_matrices = self.find_events_in_book(self.chapters_by_sentences)
-        # paragraphs_matrices = self.find_events_in_book(self.chapters_by_paragraphs)
-        #
-        # sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(sentences_matrices)
-        # paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(paragraphs_matrices)
-        #
-        # megaA = ""
-        # megaB = ""
-        # for text in sentences_texts_for_wordcloud:
-        #     megaA += text
-        # for text in paragraphs_texts_for_wordcloud:
-        #     megaB += text
-        #
-        # wordcloud_save(megaA, "../data/wordcloud/BookBySentences")
-        # wordcloud_save(megaB, "../data/wordcloud/BookByParagraphs")
-        #
-        # for i in range(0, 12):
-        #     wordcloud_save(sentences_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_BySentences")
-        #     wordcloud_save(paragraphs_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_ByParagraphs")
+        print(xxx[0][0][0])
+        print(self.__processed_book_by_paragraphs[0][0][0])
+        self.load_simplify_book_by_sentences()
+
+        sentences_matrices = self.find_events_in_book(self.chapters_by_sentences)
+        paragraphs_matrices = self.find_events_in_book(self.chapters_by_paragraphs)
+
+        sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(sentences_matrices)
+        paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(paragraphs_matrices)
+
+        megaA = ""
+        megaB = ""
+        for text in sentences_texts_for_wordcloud:
+            megaA += text
+        for text in paragraphs_texts_for_wordcloud:
+            megaB += text
+
+        wordcloud_save(megaA, "../data/wordcloud/BookBySentences")
+        wordcloud_save(megaB, "../data/wordcloud/BookByParagraphs")
+
+        for i in range(0, 12):
+            wordcloud_save(sentences_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_BySentences")
+            wordcloud_save(paragraphs_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_ByParagraphs")
 
     def get_book_by_paragraphs(self):
         return self.__book_by_paragraphs

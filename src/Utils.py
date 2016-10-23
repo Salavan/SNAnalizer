@@ -1,4 +1,5 @@
-import re
+# -*- coding: utf-8 -*-
+# import re
 import os.path
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud

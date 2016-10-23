@@ -1,5 +1,4 @@
-from pprint import pprint
-
+# -*- coding: utf-8 -*-
 from src.AliceBook import AliceBook
 from src.SNA import SNA
 
