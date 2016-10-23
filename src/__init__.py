@@ -11,7 +11,12 @@ if __name__ == "__main__":
     processed_book_by_sentences = alice.get_processed_book_by_sentences()
     character_list = alice.get_character_list()
 
-    #
+    alice.show_wordcloud_from_sencences()
+    alice.show_wordcloud_from_paragraphs()
+    # for i in range(0, 12):
+    #     alice.show_wordcloud_from_sencences_from_chapter(i)
+    #     alice.show_wordcloud_from_paragraphs_from_chapter(i)
+
     # print(book_by_paragraphs[0][5])
     # print(processed_book_by_paragraphs[0][5])
     # print()
