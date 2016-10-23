@@ -18,7 +18,6 @@ class SNA:
         self.__book = book
 
         self.prepare_data_for_graph(self.__book.get_paragraphs_matrices())
-        print(self.__characters_influence_per_chapter)
         # self.build_graph_from_paragraphs()
         self.build_graph_from_sentences()
 
@@ -86,7 +85,8 @@ class SNA:
             nodes_size[graph.nodes().index(n)] *= self.__characters_influence_per_chapter[chap][character_map[n]]
 
         edges = graph.edges()
-        weights = [graph[u][v]['weight'] for u,v in edges]*10
+        weights = [graph[u][v]['weight'] for u,v in edges]
+        weights = [float(w)*max_edge_width/sum(weights) for w in weights]
 
         if pos:
             nx.draw_networkx(graph, pos = pos, node_size=nodes_size, node_color='silver', width=weights, font_size=8)
