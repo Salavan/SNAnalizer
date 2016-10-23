@@ -4,13 +4,13 @@
 # TODO: zastanowić się nad she itd.
 import codecs
 import sys
+from pprint import pprint
 
 from src.Utils import *
 import numpy as np
 import copy
 
 python_version = sys.version_info.major
-
 
 
 class AliceBook:
@@ -22,6 +22,8 @@ class AliceBook:
     __processed_book_by_sentences = None
     __character_list = None
     __characters_map = None
+    __sentences_matrices = None
+    __paragraphs_matrices = None
 
     def __init__(self):
         self.load_whole_book()
@@ -37,27 +39,29 @@ class AliceBook:
         self.process_book_by_paragraphs_to_lower()
         self.process_book_by_sentences_to_lower()
 
+        self.find_events_in_book_by_sentences(self.__processed_book_by_sentences)
+        self.find_events_in_book_by_paragraphs(self.__processed_book_by_paragraphs)
 
-        sentences_matrices = self.find_events_in_book(self.__processed_book_by_sentences)
-        # paragraphs_matrices = self.find_events_in_book(self.__processed_book_by_paragraphs)
+        sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(self.__sentences_matrices)
+        paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(self.__paragraphs_matrices)
 
-        sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(sentences_matrices)
-        # paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(paragraphs_matrices)
-
-        megaA = ""
-        # megaB = ""
+        list_of_words_from_book_by_sentences = ""
+        list_of_words_from_book_by_paragraphs = ""
         for text in sentences_texts_for_wordcloud:
-            megaA += text
-        # for text in paragraphs_texts_for_wordcloud:
-        #     megaB += text
-        #
-        wordcloud_save(megaA, "../data/wordcloud/BookBySentences")
-        # wordcloud_save(megaB, "../data/wordcloud/BookByParagraphs")
-        #
-        for i in range(0, 12):
+            list_of_words_from_book_by_sentences += text
+        for text in paragraphs_texts_for_wordcloud:
+            list_of_words_from_book_by_paragraphs += text
+
+        # wordcloud_save(list_of_words_from_book_by_sentences, "../data/wordcloud/BookBySentences")
+        wordcloud_show(list_of_words_from_book_by_sentences)
+        # wordcloud_save(list_of_words_from_book_by_paragraphs, "../data/wordcloud/BookByParagraphs")
+        wordcloud_show(list_of_words_from_book_by_paragraphs)
+
+        for i in range(0, 2):
             # wordcloud_save(sentences_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_BySentences")
             wordcloud_show(sentences_texts_for_wordcloud[i])
-        #     wordcloud_save(paragraphs_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_ByParagraphs")
+            wordcloud_show(paragraphs_texts_for_wordcloud[i])
+            # wordcloud_save(paragraphs_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_ByParagraphs")
 
     def get_book_by_paragraphs(self):
         return self.__book_by_paragraphs
@@ -73,44 +77,6 @@ class AliceBook:
 
     def get_character_list(self):
         return self.__character_list
-
-
-
-    def find_events_in_chapter(self, chapter):
-        adj_matrix = np.zeros((len(self.__character_list), len(self.__character_list)))
-        for chunks in chapter:
-            for chunk in chapter[chunks]:
-                characters_in_event = set()
-                for word in chunk:
-                    if word in self.__characters_map:
-                        characters_in_event.add(word)
-
-                if len(characters_in_event) > 1:
-                    for name in characters_in_event:
-                        for name2 in characters_in_event:
-                            if name != name2:
-                                # adj_matrix[self.characters_map[name]][self.characters_map[name2]] = 1
-                                adj_matrix[self.__characters_map[name]][self.__characters_map[name2]] += 1
-
-        return adj_matrix
-
-    def find_events_in_book(self, book):
-        adj_matrices = []
-        for chapter in book:
-            adj_matrices += [self.find_events_in_chapter(book[chapter])]
-
-        return adj_matrices
-
-    def generate_text_for_wordcloud(self, data):
-        result = []
-        for chapter in data:
-            string = ""
-            for name in self.__character_list:
-                for _ in range(int(np.sum(chapter[self.__character_list[name]]))):
-                    string += name + " "
-            result += [string]
-
-        return result
 
     def load_whole_book(self):
         file = os.path.join("..", "data", "alice.txt")
@@ -200,64 +166,68 @@ class AliceBook:
                         self.__processed_book_by_sentences[chapter][paragraph][sentence][word] \
                             = self.__processed_book_by_sentences[chapter][paragraph][sentence][word].lower()
 
-    # def load_simplify_book_by_paragraphs(self):
-    #     # book = copy.deepcopy(self.__processed_book_by_paragraphs)
-    #     # print(book)
-    #     # book = {0, [ [["111", "222"], ["333", "444"]] ]}
-    #     book = {0: [['alice', 'beginning'], ['considering', 'mind', 'hot'], [], [], []]}
-    #     chapter__ = [['alice', 'beginning'], ['considering', 'mind', 'hot'], [], [], []]
-    #     paragraph__ = ['alice', 'beginning']
-    #
-    #     nbook = {}
-    #     for c in range(len(book)):
-    #         for p in range(len(book[c])):
-    #             if book[c][p]:
-    #                 nbook[c] = book[c][p]
-    #     print(book)
-    #     print("****")
-    #
-    #     # for chapter in book.keys():
-    #     #     for paragraph in range(len(book[chapter])):
-    #     #         book[chapter][paragraph] = list(filter(None, book[chapter][paragraph]))
-    #     #     if not book[chapter]:
-    #     #         del book[chapter]
-    #     return book
+    def find_events_in_book_by_sentences(self, book):
+        adj_matrices = []
+        for chapter in book:
+            adj_matrices += [self.find_events_in_chapter_by_sentences(book[chapter])]
 
-    #
-    # def remove_empty_keys(d):
-    #     for k in d.keys():
-    #         if not d[k]:
-    #             del d[k]
-    #
-    # def not_empty_paragraphs_len(self, book, chapter):
-    #     lenth = 0
-    #     for paragraph in range(len(book[chapter])):
-    #         if book[chapter][paragraph]:
-    #             lenth += 1
-    #     return lenth
-    #
-    # def not_empty_sentences_len(self, book, chapter, paragraph):
-    #     lenth = 0
-    #     for sentence in range(len(book[chapter][paragraph])):
-    #         if book[chapter][paragraph][sentence]:
-    #             lenth += 1
-    #     return lenth
-    #
-    # def load_simplify_book_by_paragraphs2(self):
-    #     simplified_book = {}
-    #     for chapter in range(len(self.__processed_book_by_paragraphs)):
-    #         simplified_book[chapter] = {}
-    #         for paragraph in range(len(self.__processed_book_by_paragraphs[chapter])):
-    #             simplified_book[chapter][paragraph] = []
-    #             for word in range(len(self.__processed_book_by_paragraphs[chapter][paragraph])):
-    #                 if self.__processed_book_by_paragraphs[chapter][paragraph][word]:
-    #                     simplified_book[chapter][paragraph]\
-    #                         .append(self.__processed_book_by_paragraphs[chapter][paragraph][word])
-    #     return simplified_book
+        self.__sentences_matrices = adj_matrices
+
+    def find_events_in_chapter_by_sentences(self, chapter):
+        adj_matrix = np.zeros((len(self.__character_list), len(self.__character_list)))
+        for paragraph in chapter:
+            for sentence in chapter[paragraph]:
+                characters_in_event = set()
+                for word in sentence:
+                    if word in self.__characters_map:
+                        characters_in_event.add(word)
+
+                if len(characters_in_event) > 1:
+                    for name in characters_in_event:
+                        for name2 in characters_in_event:
+                            if name != name2:
+                                # adj_matrix[self.characters_map[name]][self.characters_map[name2]] = 1
+                                adj_matrix[self.__characters_map[name]][self.__characters_map[name2]] += 1
+
+        return adj_matrix
+
+    def find_events_in_book_by_paragraphs(self, book):
+        adj_matrices = []
+        for chapter in book:
+            adj_matrices += [self.find_events_in_chapter_by_paragraphs(book[chapter])]
+
+        self.__paragraphs_matrices = adj_matrices
+
+    def find_events_in_chapter_by_paragraphs(self, chapter):
+        adj_matrix = np.zeros((len(self.__character_list), len(self.__character_list)))
+        for paragraph in chapter:
+            characters_in_event = set()
+            for word in paragraph:
+                if word in self.__characters_map:
+                    characters_in_event.add(word)
+
+            if len(characters_in_event) > 1:
+                for name in characters_in_event:
+                    for name2 in characters_in_event:
+                        if name != name2:
+                            # adj_matrix[self.characters_map[name]][self.characters_map[name2]] = 1
+                            adj_matrix[self.__characters_map[name]][self.__characters_map[name2]] += 1
+
+        return adj_matrix
+
+    def generate_text_for_wordcloud(self, data):
+        result = []
+        for chapter in data:
+            string = ""
+            for character in self.__character_list:
+                for _ in range(int(np.sum(chapter[self.__characters_map[character]]))):
+                    string += character + " "
+            result += [string]
+
+        return result
 
 
 def filter_alice_character_list(characters_list):
-    print(characters_list)
     characters_list.remove("let")
     characters_list.remove("time")
     characters_list.remove("come")
