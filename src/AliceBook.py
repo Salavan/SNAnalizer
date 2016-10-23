@@ -2,10 +2,15 @@
 # TODO: Ogarniecie zmiany Queen's => Queen itd.
 # TODO: Przemyslec duze male litery u bohaterow, i ogarnac lepsze znajdowanie ich. np. jakiś tam Cat
 # TODO: zastanowić się nad she itd.
+import codecs
+import sys
 
 from src.Utils import *
 import numpy as np
 import copy
+
+python_version = sys.version_info.major
+
 
 
 class AliceBook:
@@ -35,23 +40,23 @@ class AliceBook:
 
         sentences_matrices = self.find_events_in_book(self.chapters_by_sentences)
         paragraphs_matrices = self.find_events_in_book(self.chapters_by_paragraphs)
-        #
-        # sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(sentences_matrices)
-        # paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(paragraphs_matrices)
-        #
-        # megaA = ""
-        # megaB = ""
-        # for text in sentences_texts_for_wordcloud:
-        #     megaA += text
-        # for text in paragraphs_texts_for_wordcloud:
-        #     megaB += text
-        #
-        # wordcloud_save(megaA, "../data/wordcloud/BookBySentences")
-        # wordcloud_save(megaB, "../data/wordcloud/BookByParagraphs")
-        #
-        # for i in range(0, 12):
-        #     wordcloud_save(sentences_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_BySentences")
-        #     wordcloud_save(paragraphs_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_ByParagraphs")
+
+        sentences_texts_for_wordcloud = self.generate_text_for_wordcloud(sentences_matrices)
+        paragraphs_texts_for_wordcloud = self.generate_text_for_wordcloud(paragraphs_matrices)
+
+        megaA = ""
+        megaB = ""
+        for text in sentences_texts_for_wordcloud:
+            megaA += text
+        for text in paragraphs_texts_for_wordcloud:
+            megaB += text
+
+        wordcloud_save(megaA, "../data/wordcloud/BookBySentences")
+        wordcloud_save(megaB, "../data/wordcloud/BookByParagraphs")
+
+        for i in range(0, 12):
+            wordcloud_save(sentences_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_BySentences")
+            wordcloud_save(paragraphs_texts_for_wordcloud[i], "../data/wordcloud/" + str(i+1) + "_ByParagraphs")
 
     def get_book_by_paragraphs(self):
         return self.__book_by_paragraphs
@@ -108,8 +113,13 @@ class AliceBook:
 
     def load_whole_book(self):
         file = os.path.join("..", "data", "alice.txt")
-        with open(file, "r", encoding="utf-8") as book:
-            whole_book = book.readlines()
+
+        if python_version == 3:
+            with open(file, "r", encoding="utf-8") as book:
+                whole_book = book.readlines()
+        else:
+            with codecs.open(file, "r", encoding="utf-8") as book:
+                whole_book = book.readlines()
         self.__whole_book = whole_book
 
     def load_chapters(self):
@@ -246,6 +256,7 @@ class AliceBook:
 
 
 def filter_alice_character_list(characters_list):
+    print(characters_list)
     characters_list.remove("let")
     characters_list.remove("time")
     characters_list.remove("come")
