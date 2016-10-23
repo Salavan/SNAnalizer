@@ -31,18 +31,11 @@ class AliceBook:
         self.load_book_by_paragraphs()
         self.load_book_by_sentences()
 
-        # self.process_book_by_paragraphs()
-        # self.process_book_by_sentences()
+        self.process_book_by_paragraphs()
+        self.process_book_by_sentences()
 
-        print(self.__book_by_sentences)
-
-        self.process_book_by_paragraphs_with_nltk()
-        self.process_book_by_sentences_with_nltk()
-
-        print(self.__processed_book_by_paragraphs)
-        print(self.__processed_book_by_sentences)
-
-        exit()
+        # self.process_book_by_paragraphs_with_nltk()
+        # self.process_book_by_sentences_with_nltk()
 
         self.load_character_list()
         self.load_character_map()

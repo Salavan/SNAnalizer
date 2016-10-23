@@ -10,7 +10,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk import wordpunct_tokenize
 
 python_version = sys.version_info.major
-
+wordNetLemmatizer = WordNetLemmatizer()
 
 def load_stop_words(file=None):
     stoplist_set = set()
@@ -69,7 +69,7 @@ def split_chapter(chapter):
     paragraphs = []
     paragraph = ""
     for line in chapter:
-        if line == "\n":
+        if (python_version == 3 and line == "\n") or (python_version == 2 and line == "\r\n"):
             if paragraph == "":
                 continue
             paragraphs += [paragraph]
@@ -128,7 +128,7 @@ def filter_string_with_nltk(text):
     result = []
     for word in wordpunct_tokenize(text):
         if word.isalpha() and word.lower() not in stopwords.words('english'):
-            base_form = WordNetLemmatizer().lemmatize(word, 'v')
+            base_form = wordNetLemmatizer.lemmatize(word, 'v')
             result.append(base_form)
 
     return result
