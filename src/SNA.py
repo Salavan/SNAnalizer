@@ -19,7 +19,7 @@ class SNA:
     def __init__(self, book):
         self.__book = book
 
-        case  = 0
+        case  = 1
 
         if case == 1: #paragraphs
             self.prepare_data_for_graph(self.__book.get_paragraphs_matrices())
@@ -101,7 +101,8 @@ class SNA:
             self.__chapters_graphs.append(tmp_graph)
 
             if prev_graph:
-                self.__time_chapters_graphs.append(self.combined_time_graphs(prev_graph, tmp_graph))
+                self.__time_chapters_graphs.append(self.combined_time_graphs(prev_graph, tmp_graph, 0.9, 1))
+                # self.__time_chapters_graphs.append(self.combined_time_graphs(prev_graph, tmp_graph))
                 prev_graph = self.__time_chapters_graphs[-1]
             else:
                 self.__time_chapters_graphs.append(tmp_graph)
@@ -199,7 +200,3 @@ class SNA:
         self.__whole_characters_influence = whole_characters_influence
         self.__characters_influence_per_chapter  = characters_influence_per_chapter
         self.__time_inlude_characters_influence_per_chapter  = time_inlude_characters_influence_per_chapter
-
-
-
-
