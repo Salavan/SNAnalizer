@@ -19,31 +19,35 @@ class SNA:
     def __init__(self, book):
         self.__book = book
 
-
-
-        case = 0
+        case  = 0
 
         if case == 1: #paragraphs
             self.prepare_data_for_graph(self.__book.get_paragraphs_matrices())
             self.build_graph_from_paragraphs()
             pos = self.get_nodes_pos(nx.compose_all(self.__chapters_graphs))
-            for i in range(len(self.__chapters_graphs)):
-                #TODO: use this :p
-                degree_centrality = nx.degree_centrality(self.__chapters_graphs[i])
-                closeness_centrality = nx.closeness_centrality(self.__chapters_graphs[i])
-                eigenvector_centrality = nx.eigenvector_centrality_numpy(self.__chapters_graphs[i])
+            time_pos = self.get_nodes_pos(nx.compose_all(self.__time_chapters_graphs))
 
+            #TODO: use this :p
+            # http://networkx.readthedocs.io/en/networkx-1.11/reference/algorithms.vitality.html?highlight=weight
+            # degree_centrality = nx.degree_centrality(self.__chapters_graphs[i])
+            # closeness_centrality = nx.closeness_centrality(self.__chapters_graphs[i])
+            # eigenvector_centrality = nx.eigenvector_centrality_numpy(self.__chapters_graphs[i])
+
+            for i in range(len(self.__chapters_graphs)):
                 self.draw_chapter_graph(i, "ByParagraphs", pos)
-                self.draw_chapter_graph(i, "ByParagraphsWithTime", pos, True)
+            for i in range(len(self.__time_chapters_graphs)):
+                self.draw_chapter_graph(i, "ByParagraphsWithTime", time_pos, True)
             self.draw_chapter_graph("whole", "ByParagraphs", pos)
 
         else: #sentences
             self.prepare_data_for_graph(self.__book.get_sentences_matrices())
             self.build_graph_from_sentences()
             pos = self.get_nodes_pos(nx.compose_all(self.__chapters_graphs))
+            time_pos = self.get_nodes_pos(nx.compose_all(self.__time_chapters_graphs))
             for i in range(len(self.__chapters_graphs)):
                 self.draw_chapter_graph(i, "BySentences", pos)
-                self.draw_chapter_graph(i, "BySentencesWithTime", pos, True)
+            for i in range(len(self.__time_chapters_graphs)):
+                self.draw_chapter_graph(i, "BySentencesWithTime", time_pos, True)
 
             self.draw_chapter_graph("whole", "BySentences", pos)
 
@@ -52,22 +56,16 @@ class SNA:
         character_list = self.__book.get_character_list()
         graph.add_nodes_from(character_list)
 
-    def add_edges(self, graph, matrix):
+    def add_weighted_edges(self, graph, matrix):
         rev_character_map = self.__book.get_rev_characters_map()
 
         for x in range(len(matrix)):
             for y in range(len(matrix)):
                 if x != y and matrix[x][y] != 0:
-                    for _ in range(int(matrix[x][y])):
-                        try:
-                            graph.edge[rev_character_map[x]][rev_character_map[y]]['weight'] += 1
-                            graph.edge[rev_character_map[y]][rev_character_map[x]]['weight'] += 1
-                        except:
-                            graph.add_edge(rev_character_map[x], rev_character_map[y], weight=1)
-                            graph.add_edge(rev_character_map[y], rev_character_map[x], weight=1)
+                    graph.add_edge(rev_character_map[x], rev_character_map[y], weight=int(matrix[x][y]))
 
     def build_graph_from_chapter(self, graph, matrix):
-        self.add_edges(graph, matrix)
+        self.add_weighted_edges(graph, matrix)
 
     def get_nodes_pos(self, whole_graph):
         return nx.spring_layout(whole_graph, k=1,iterations=20)
@@ -79,6 +77,20 @@ class SNA:
             self.build_graph_from_chapter(whole_graph, matrices[i])
         return whole_graph
 
+    def combined_time_graphs(self, A, B, weightA = 1, weightB=2):
+        C = nx.Graph()
+        for u,v,hdata in A.edges_iter(data=True):
+            new_attributes = dict((key, value*weightA) if key == 'weight' else (key, value) for key,value in hdata.items())
+            C.add_edge(u, v, new_attributes)
+
+        for u,v,hdata in B.edges_iter(data=True):
+            if not (u in C and v in C[u]):
+                C.add_edge(u, v, hdata)
+            else:
+                new_attributes = dict((key, value*weightB+C[u][v]['weight']) if key == 'weight' else (key, value) for key,value in hdata.items())
+                C.add_edge(u, v, new_attributes)
+        return C
+
     def build_graphs(self, matrices):
         rev_character_map = self.__book.get_rev_characters_map()
         prev_graph = None
@@ -89,21 +101,11 @@ class SNA:
             self.__chapters_graphs.append(tmp_graph)
 
             if prev_graph:
-                for x in range(len(matrices[0])):
-                    for y in range(len(matrices[0])):
-                        try:
-                            prev_graph.edge[rev_character_map[x]][rev_character_map[y]]['weight'] = \
-                                float(prev_graph.edge[rev_character_map[x]][rev_character_map[y]]['weight'])/2
-                        except:
-                            pass
-
-                print(prev_graph.is_multigraph())
-                print(tmp_graph.is_multigraph())
-                self.__time_chapters_graphs.append(nx.compose(prev_graph, tmp_graph)) # albo union...
-
+                self.__time_chapters_graphs.append(self.combined_time_graphs(prev_graph, tmp_graph))
                 prev_graph = self.__time_chapters_graphs[-1]
             else:
-                prev_graph = copy.deepcopy(tmp_graph)
+                self.__time_chapters_graphs.append(tmp_graph)
+                prev_graph = tmp_graph
 
 
 
@@ -115,10 +117,13 @@ class SNA:
 
     def draw_chapter_graph(self, chap, dir, pos = None, include_time = False):
         graph = None
-        if chap == "whole" or include_time:
+        if chap == "whole":
             graph = nx.compose_all(self.__chapters_graphs)
+        elif include_time:
+            graph = self.__time_chapters_graphs[chap]
         else:
             graph = self.__chapters_graphs[chap]
+
         character_map = self.__book.get_characters_map()
 
         nodes_size = np.ones(graph.number_of_nodes())*max_node_size
