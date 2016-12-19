@@ -2,8 +2,12 @@
 import re
 import codecs
 import os.path
+from genericpath import isfile
+
 import matplotlib.pyplot as plt
 import sys
+
+from os import listdir
 from wordcloud import WordCloud
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
@@ -38,15 +42,19 @@ def load_stop_words(file=None):
     return stoplist_set
 
 
-def load_chapters(ch_range=None):
+def load_chapters(path, ch_range=None):
+    print(path)
+    chapter_files = [int(f.replace(".txt", "")) for f in listdir(path) if isfile(os.path.join(path, f)) and f.endswith(".txt") and f not in ["characters.txt"]]
+    first_chapt, last_chapt = min(chapter_files), max(chapter_files)
+    # print(first_chapt, last_chapt)
     chapters = []
-    for i in range(1, 13) if not ch_range else ch_range:
-        chapters += [load_chapter(i)]
+    for i in range(first_chapt, last_chapt) if not ch_range else ch_range:
+        chapters += [load_chapter(path, i)]
     return chapters
 
 
-def load_chapter(number):
-    file = os.path.join("..", "data", "chapters", "{0}.txt".format(number))
+def load_chapter(path, number):
+    file = os.path.join(path, "{0}.txt".format(number))
     if python_version == 3:
         with open(file, "r", encoding="utf-8") as chapter:
             return chapter.readlines()
@@ -124,11 +132,11 @@ def convert_to_lowercase(book):
                 for j in range(len(book[chapter][chunks][i])):
                     book[chapter][chunks][i][j] = book[chapter][chunks][i][j].lower()
 
-def filter_string_with_nltk(text):
+def filter_string_with_nltk(text, applyStopwords = True):
     result = []
     for word in wordpunct_tokenize(text):
-        if word.isalpha() and word.lower() not in stopwords.words('english'):
+        if word.isalpha() and ((applyStopwords and word.lower() not in stopwords.words('english')) or not applyStopwords):
             base_form = wordNetLemmatizer.lemmatize(word, 'v')
-            result.append(base_form)
+            result.append(base_form.lower())
 
     return result

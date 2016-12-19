@@ -1,11 +1,33 @@
 # -*- coding: utf-8 -*-
-from src.AliceBook import AliceBook
-from src.SNA import SNA
-
 
 if __name__ == "__main__":
-    alice = AliceBook()
-    sna = SNA(alice)
+    from src.SNA import SNA
+    from src.Book import Book
+
+    oliver = Book("C:/studia/ed/SNAnalizer/data/Books/Charles Dickens - Oliver Twist.txt")
+    oliver_sna = SNA(oliver, "paragraphs")
+    # oliver = Book("C:/studia/ed/SNAnalizer/data/Books/Charles Dickens - Oliver Twist.txt")
+    # oliver_sna = SNA(oliver, "sentences")
+
+    # alice = Book("C:/studia/ed/SNAnalizer/data/Books/Lewis Carroll - Alice's Adventures in Wonderland.txt")
+    # alice_sna = SNA(alice, "paragraphs")
+    # alice = Book("C:/studia/ed/SNAnalizer/data/Books/Lewis Carroll - Alice's Adventures in Wonderland.txt")
+    # alice_sna = SNA(alice, "sentences")
+
+    # harry = Book("C:/studia/ed/SNAnalizer/data/Books/J.K. Rowling - Harry Potter and the Sorcerer's Stone.txt")
+    # harry_sna = SNA(harry, "paragraphs")
+    # harry = Book("C:/studia/ed/SNAnalizer/data/Books/J.K. Rowling - Harry Potter and the Sorcerer's Stone.txt")
+    # harry_sna = SNA(harry, "sentences")
+
+
+
+
+
+
+
+
+
+
 
     # book_by_paragraphs = alice.get_book_by_paragraphs()
     # book_by_sentences = alice.get_book_by_sentences()
